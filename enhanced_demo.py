@@ -34,7 +34,7 @@ async def demo_conversation_improvements():
     print("-" * 40)
     
     # Generate initial query
-    initial_query = "get all companies with their payment amounts"
+    initial_query = "get all employees with their total work hours"
     print(f"🔍 User Query: '{initial_query}'")
     
     try:
@@ -60,7 +60,7 @@ async def demo_conversation_improvements():
     print("-" * 40)
     
     # First improvement
-    improvement1 = "change this to a LEFT JOIN and include companies with zero payments"
+    improvement1 = "change this to a LEFT JOIN and include employees with zero hours"
     print(f"🔧 User Request: '{improvement1}'")
     
     try:
@@ -101,7 +101,7 @@ async def demo_conversation_improvements():
     print("-" * 40)
     
     # Second improvement
-    improvement2 = "add ordering by amount descending and limit to top 10"
+    improvement2 = "add WHERE clause for active employees"
     print(f"🔧 User Request: '{improvement2}'")
     
     try:
@@ -126,7 +126,7 @@ async def demo_conversation_improvements():
             print(f"📊 Final SQL: {improvement_result['improved_sql'][:100]}...")
             
             session.add_message('user', improvement2)
-            session.add_message('assistant', "Added ordering and limit", {
+            session.add_message('assistant', "Added WHERE clause", {
                 'sql_query': improvement_result['improved_sql'],
                 'confidence': improvement_result['confidence'],
                 'changes_made': improvement_result['changes_made']
@@ -175,11 +175,9 @@ def demo_chat_interface():
     print("   • Detailed logging with conversation context")
     print()
     print("💬 Example Conversation Flow:")
-    print("   1. 'get all companies with payment amounts'")
-    print("   2. 'change this to LEFT JOIN'")
-    print("   3. 'add WHERE clause for active companies'")
-    print("   4. 'order by amount descending'")
-    print("   5. 'limit to top 10 results'")
+    print("   1. 'get all employees with work hours'")
+    print("   2. 'change this to LEFT JOIN and include employees with zero hours'")
+    print("   3. 'add WHERE clause for active employees'")
     print()
     print("🧠 The AI remembers everything and provides intelligent improvements!")
 

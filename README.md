@@ -79,34 +79,34 @@ The chat interface will open at `http://localhost:8501`
 
 ### **Example Conversations**
 
-**User**: "Get all company names with open payment amounts"
+**User**: "Get all employee names with their total work hours"
 
 **AI**: ✅ **Query Generated Successfully!**
 
-**Explanation**: This query retrieves company names and calculates open payment amounts by joining dl_buyer with dl_payment_history tables.
+**Explanation**: This query retrieves employee names and calculates total work hours by joining emp_employees with emp_timesheets tables.
 
 ```sql
-SELECT b.company_name,
-       SUM(p.payment_amount - COALESCE(p.consumed_amount, 0)) AS open_payment_amount
-FROM dl_buyer b
-JOIN dl_payment_history p ON b.books_buyer_id = p.books_buyer_id
-GROUP BY b.company_name
-HAVING SUM(p.payment_amount - COALESCE(p.consumed_amount, 0)) > 0;
+SELECT e.employee_name,
+       SUM(t.hours_worked) AS total_work_hours
+FROM emp_employees e
+JOIN emp_timesheets t ON e.employee_id = t.employee_id
+GROUP BY e.employee_name
+HAVING SUM(t.hours_worked) > 0;
 ```
 
-**User**: "Change that to a LEFT JOIN and include companies with zero amounts"
+**User**: "Change that to a LEFT JOIN and include employees with zero hours"
 
 **AI**: 🔧 **SQL Improved!**
 
-**Changes Made**: Changed INNER JOIN to LEFT JOIN and removed HAVING clause to include companies with zero amounts.
+**Changes Made**: Changed INNER JOIN to LEFT JOIN and removed HAVING clause to include employees with zero hours.
 
 ```sql
-SELECT b.company_name,
-       COALESCE(SUM(p.payment_amount - COALESCE(p.consumed_amount, 0)), 0) AS open_payment_amount
-FROM dl_buyer b
-LEFT JOIN dl_payment_history p ON b.books_buyer_id = p.books_buyer_id
-GROUP BY b.company_name
-ORDER BY b.company_name;
+SELECT e.employee_name,
+       COALESCE(SUM(t.hours_worked), 0) AS total_work_hours
+FROM emp_employees e
+LEFT JOIN emp_timesheets t ON e.employee_id = t.employee_id
+GROUP BY e.employee_name
+ORDER BY e.employee_name;
 ```
 
 ## 🖥️ Command Line Interface
@@ -114,7 +114,7 @@ ORDER BY b.company_name;
 ### **Basic Usage**
 ```bash
 # Generate and execute query
-python cli.py generate "get all companies with payments > 1000"
+python cli.py generate "get all employees with work hours > 40"
 
 # Generate only (dry run)
 python cli.py generate "show me top 10 customers" --mode dry_run
@@ -151,10 +151,10 @@ The system now uses **AI-powered table selection** instead of simple keyword mat
 ### **Example AI Reasoning**
 ```
 🧠 AI Table Selection Results (confidence: 95.0%):
-  1. dl_buyer - This table likely contains company names and is the starting point
-  2. dl_payment_history - This table stores payment amounts explicitly mentioned
-  3. dl_payment_information - Contains general payment information and status
-  4. dl_invoices - Needed to determine invoice totals related to payments
+  1. emp_employees - This table likely contains employee names and is the starting point
+  2. emp_timesheets - This table stores work hours explicitly mentioned
+  3. emp_departments - Contains department information for employees
+  4. emp_projects - Needed to determine project assignments related to work hours
 ```
 
 ## 📊 Performance Optimizations
@@ -182,7 +182,7 @@ python -m uvicorn api:app --reload
 # Generate SQL
 curl -X POST "http://localhost:8000/generate" \
   -H "Content-Type: application/json" \
-  -d '{"query": "get all companies with open payments", "execute": true}'
+  -d '{"query": "get all employees with total work hours", "execute": true}'
 
 # API Documentation
 open http://localhost:8000/docs
@@ -198,7 +198,7 @@ generator = SQLQueryGenerator()
 
 # Generate and execute
 result = await generator.generate_and_execute_query(
-    "get all companies with payments > 1000",
+    "get all employees with work hours > 40",
     execute=True
 )
 

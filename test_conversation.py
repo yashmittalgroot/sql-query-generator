@@ -15,29 +15,27 @@ def test_conversation_context():
     session = ChatSession()
     
     print("1. 📝 Simulating Initial Query...")
-    session.add_message('user', 'get all companies with payment amounts')
-    session.add_message('assistant', 'Generated SQL query for companies with payments', {
-        'sql_query': 'SELECT c.company_name, SUM(p.payment_amount) AS total_payments FROM dl_buyer c JOIN dl_payment_history p ON c.books_buyer_id = p.books_buyer_id GROUP BY c.company_name ORDER BY total_payments DESC',
-        'confidence': 0.95,
-        'explanation': 'This query joins companies with payments and shows total payment amounts'
+    session.add_message('user', 'get all employees with their total work hours')
+    session.add_message('assistant', 'Generated SQL query for employees with work hours', {
+        'sql_query': 'SELECT e.employee_name, SUM(t.hours_worked) AS total_hours FROM emp_employees e JOIN emp_timesheets t ON e.employee_id = t.employee_id GROUP BY e.employee_name ORDER BY total_hours DESC',
+        'confidence': 95.0,
+        'explanation': 'This query joins employees with timesheets and shows total work hours'
     })
     
     print("2. 🔧 Simulating First Improvement...")
-    session.add_message('user', 'change this to LEFT JOIN and include companies with zero payments')
-    session.add_message('assistant', 'Updated to LEFT JOIN to include all companies', {
-        'sql_query': 'SELECT c.company_name, COALESCE(SUM(p.payment_amount), 0) AS total_payments FROM dl_buyer c LEFT JOIN dl_payment_history p ON c.books_buyer_id = p.books_buyer_id GROUP BY c.company_name ORDER BY total_payments DESC',
-        'confidence': 0.92,
-        'changes_made': 'Changed INNER JOIN to LEFT JOIN and added COALESCE for zero amounts',
-        'explanation': 'Now includes all companies, even those without payments'
+    session.add_message('user', 'change this to LEFT JOIN and include employees with zero hours')
+    session.add_message('assistant', 'Updated to LEFT JOIN to include all employees', {
+        'sql_query': 'SELECT e.employee_name, COALESCE(SUM(t.hours_worked), 0) AS total_hours FROM emp_employees e LEFT JOIN emp_timesheets t ON e.employee_id = t.employee_id GROUP BY e.employee_name ORDER BY total_hours DESC',
+        'changes_made': 'Changed INNER JOIN to LEFT JOIN and added COALESCE for zero hours',
+        'explanation': 'Now includes all employees, even those without recorded hours'
     })
     
     print("3. ⚡ Simulating Second Improvement...")
-    session.add_message('user', 'add filtering for companies created after 2020')
-    session.add_message('assistant', 'Added date filtering for recent companies', {
-        'sql_query': 'SELECT c.company_name, COALESCE(SUM(p.payment_amount), 0) AS total_payments FROM dl_buyer c LEFT JOIN dl_payment_history p ON c.books_buyer_id = p.books_buyer_id WHERE c.created_date > \'2020-01-01\' GROUP BY c.company_name ORDER BY total_payments DESC',
-        'confidence': 0.89,
-        'changes_made': 'Added WHERE clause to filter companies created after 2020-01-01',
-        'explanation': 'Query now only shows companies created after 2020'
+    session.add_message('user', 'add filtering for employees hired after 2020')
+    session.add_message('assistant', 'Added date filtering for recent employees', {
+        'sql_query': 'SELECT e.employee_name, COALESCE(SUM(t.hours_worked), 0) AS total_hours FROM emp_employees e LEFT JOIN emp_timesheets t ON e.employee_id = t.employee_id WHERE e.hire_date > \'2020-01-01\' GROUP BY e.employee_name ORDER BY total_hours DESC',
+        'changes_made': 'Added WHERE clause to filter employees hired after 2020-01-01',
+        'explanation': 'Query now only shows employees hired after 2020'
     })
     
     print("\n📊 Session Statistics:")

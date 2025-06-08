@@ -57,14 +57,12 @@ async def improve_sql_with_ai(current_sql: str, improvement_request: str,
 #### Conversation Context Format
 ```
 === CONVERSATION HISTORY ===
-[HH:MM:SS] USER: get all companies with payment amounts
-[HH:MM:SS] ASSISTANT: Generated SQL query...
-    SQL Generated: SELECT c.company_name, SUM(p.amount)...
-    Confidence: 95.0%
+[HH:MM:SS] USER: get all employees with their work hours
+[HH:MM:SS] ASSISTANT: ✅ Query Generated Successfully!
 
 === SQL EVOLUTION HISTORY ===
 Version 1 [HH:MM:SS]:
-  User Request: get all companies with payment amounts
+  User Request: get all employees with their work hours
   Changes Made: Initial generation
   SQL: SELECT ...
   Confidence: 95.0%
@@ -101,14 +99,14 @@ Interactive hints for users when they have an active SQL query:
 
 ### Test Conversation Flow
 ```
-1. User: "get all companies with payment amounts"
+1. User: "get all employees with their work hours"
    → AI generates initial SQL with 95% confidence
 
-2. User: "change this to LEFT JOIN and include companies with zero payments"
+2. User: "change this to LEFT JOIN and include employees with zero hours"
    → AI understands context, modifies JOIN type, adds COALESCE
-   → Shows: "Context Understanding: I see you want to include all companies..."
+   → Shows: "Context Understanding: I see you want to include all employees..."
 
-3. User: "add filtering for companies created after 2020"
+3. User: "add filtering for employees created after 2020"
    → AI remembers the LEFT JOIN context and adds WHERE clause appropriately
    → Maintains all previous improvements while adding new requirement
 ```
@@ -129,7 +127,7 @@ sql_history = [
         "sql": "SELECT ...",
         "explanation": "This query...",
         "confidence": 0.95,
-        "user_request": "get all companies...",
+        "user_request": "get all employees...",
         "changes_made": "Added LEFT JOIN..."
     }
 ]
@@ -147,13 +145,13 @@ sql_history = [
 ### Basic Improvement Flow
 ```python
 # User has existing SQL from previous conversation
-current_sql = "SELECT c.name, SUM(p.amount) FROM companies c JOIN payments p..."
+current_sql = "SELECT e.name, SUM(t.hours) FROM employees e JOIN timesheets t..."
 
 # User requests improvement
-improvement = "change this to LEFT JOIN"
+user_request = "change this to LEFT JOIN"
 
 # AI receives full context including:
-# - Original request: "get all companies with payment amounts"
+# - Original request: "get all employees with their work hours"
 # - Previous explanations and confidence scores
 # - Current SQL state
 # - Improvement request

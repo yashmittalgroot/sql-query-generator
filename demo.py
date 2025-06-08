@@ -15,10 +15,10 @@ async def demo_ai_table_selection():
     
     # Test different types of queries
     queries = [
-        "get all company names with open payment amounts",
-        "find users who placed orders in the last month", 
-        "show invoice totals by customer",
-        "list all buyers with credit limits above 50000"
+        "get all employee names with their total work hours",
+        "show recent project tasks and assignees", 
+        "show project budgets by department",
+        "list all employees with salaries above 50000"
     ]
     
     for query in queries:
@@ -42,8 +42,8 @@ async def demo_sql_generation():
     
     generator = SQLQueryGenerator(QueryExecutionMode.DRY_RUN)
     
-    # Example business query
-    business_query = "get all company names with open payment amount (payment amount - consumed amount), joining dl_buyer with payment"
+    # Example business query using natural language
+    business_query = "get all employee names with their total hours worked (total time from timesheet entries), joining emp_employees with emp_timesheets"
     
     print(f"\n📝 Business Query: {business_query}")
     print("-" * 40)
@@ -84,11 +84,10 @@ async def demo_interactive_features():
     print("✅ Conversation history")
     
     print("\n🎯 Example Chat Flow:")
-    print("User: 'Get all companies with payments > 1000'")
-    print("AI: [Generates SQL with JOIN between dl_buyer and dl_payment_history]")
-    print("User: 'Change that to a LEFT JOIN'")
-    print("AI: [Updates SQL to use LEFT JOIN]")
-    print("User: 'Add a filter for active companies only'")
+    print("User: 'Get all employees with work hours > 40'")
+    print("AI: [Generates SQL with JOIN between emp_employees and emp_timesheets]")
+    print()
+    print("User: 'Add a filter for active employees only'")
     print("AI: [Adds WHERE clause for active status]")
 
 def main():

@@ -129,7 +129,7 @@ AVAILABLE TABLES:
 Please analyze the user's request and select the {max_tables} most relevant tables that would be needed to fulfill this query.
 
 Consider:
-1. What data entities are mentioned in the query (companies, payments, users, etc.)
+1. What data entities are mentioned in the query (employees, timesheets, departments, etc.)
 2. What operations are requested (joins, aggregations, filtering)
 3. Which tables likely contain the required columns
 4. Primary tables vs supporting/lookup tables

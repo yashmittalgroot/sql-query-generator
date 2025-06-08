@@ -8,16 +8,16 @@ Gemini AI receives different types and amounts of information depending on the o
 
 ### 1️⃣ **New Query Generation**
 
-When you ask: `"get all companies with payment amounts"`
+When you ask: `"get all employees with their total work hours"`
 
 #### **Schema Information**
 ```
 📋 Database Schema (354+ tables):
 ┌─────────────────────────────────────────────────────────────┐
-│ Table: dl_buyer                                             │
-│ Columns: books_buyer_id, company_name, created_date, etc.   │
-│ Types: INTEGER, VARCHAR, TIMESTAMP, etc.                    │
-│ Relationships: Foreign keys to other tables                 │
+│ Table: emp_employees                                        │
+│ Columns: employee_id, employee_name, hire_date, etc.       │
+│ Types: INTEGER, VARCHAR, TIMESTAMP, etc.                   │
+│ Relationships: Foreign keys to other tables                │
 └─────────────────────────────────────────────────────────────┘
 
 📋 All 354 tables with:
@@ -31,10 +31,10 @@ When you ask: `"get all companies with payment amounts"`
 #### **User Query Context**
 ```
 🔍 User Intent Analysis:
-• Original query: "get all companies with payment amounts"
+• Original query: "get all employees with their total work hours"
 • Query type: NEW (not an improvement)
 • No previous conversation context
-• Business domain: Financial/payment data
+• Business domain: Employee/HR data
 ```
 
 #### **AI Instructions**
@@ -49,7 +49,7 @@ When you ask: `"get all companies with payment amounts"`
 
 ### 2️⃣ **Query Improvement with Context**
 
-When you ask: `"change this to LEFT JOIN and include zero payments"`
+When you ask: `"change this to LEFT JOIN and include employees with zero hours"`
 
 #### **Full Conversation History**
 ```
@@ -57,9 +57,9 @@ When you ask: `"change this to LEFT JOIN and include zero payments"`
 ┌─────────────────────────────────────────────────────────────┐
 │ === CONVERSATION HISTORY ===                               │
 │                                                             │
-│ [06:05:24] USER: get all companies with payment amounts     │
+│ [06:05:24] USER: get all employees with work hours         │
 │ [06:05:26] ASSISTANT: Generated SQL query...               │
-│     SQL Generated: SELECT c.company_name, SUM(p.amount)... │
+│     SQL Generated: SELECT e.employee_name, SUM(t.hours)... │
 │     Confidence: 95.0%                                      │
 │                                                             │
 │ [06:16:13] USER: change this to LEFT JOIN...               │
@@ -67,14 +67,14 @@ When you ask: `"change this to LEFT JOIN and include zero payments"`
 │ === SQL EVOLUTION HISTORY ===                              │
 │                                                             │
 │ Version 1 [06:05:26]:                                      │
-│   User Request: get all companies with payment amounts      │
+│   User Request: get all employees with work hours          │
 │   Changes Made: Initial generation                          │
-│   SQL: SELECT c.company_name, SUM(p.payment_amount)...     │
-│   Explanation: This query joins companies with payments    │
+│   SQL: SELECT e.employee_name, SUM(t.hours_worked)...      │
+│   Explanation: This query joins employees with timesheets  │
 │   Confidence: 95.0%                                        │
 │                                                             │
 │ === CURRENT STATE ===                                      │
-│ Current SQL: SELECT c.company_name, SUM(p.amount)...       │
+│ Current SQL: SELECT e.employee_name, SUM(t.hours)...       │
 │ Total messages in conversation: 4                          │
 │ SQL versions created: 1                                    │
 └─────────────────────────────────────────────────────────────┘
@@ -84,7 +84,7 @@ When you ask: `"change this to LEFT JOIN and include zero payments"`
 ```
 📝 Active Query Context:
 • Current SQL: The exact SQL from previous generation
-• Improvement request: "change this to LEFT JOIN and include zero payments"
+• Improvement request: "change this to LEFT JOIN and include employees with zero hours"
 • Schema information: Available for reference
 • Context length: ~2,400+ characters of conversation history
 ```
@@ -132,20 +132,20 @@ When you ask: `"change this to LEFT JOIN and include zero payments"`
 ┌─────────────────────────────────────────────────────────────┐
 │ Example Table Information Sent to Gemini:                  │
 │                                                             │
-│ dl_buyer:                                                   │
-│   books_buyer_id: INTEGER (Primary Key)                    │
-│   company_name: VARCHAR(255)                               │
-│   created_date: TIMESTAMP                                  │
+│ emp_employees:                                              │
+│   employee_id: INTEGER (Primary Key)                       │
+│   employee_name: VARCHAR(255)                              │
+│   hire_date: TIMESTAMP                                     │
 │   status: VARCHAR(50)                                      │
-│   contact_email: VARCHAR(255)                              │
+│   department_id: INTEGER                                   │
 │   ... (all columns with types)                             │
 │                                                             │
-│ dl_payment_history:                                         │
-│   payment_id: INTEGER (Primary Key)                        │
-│   books_buyer_id: INTEGER (Foreign Key → dl_buyer)         │
-│   payment_amount: DECIMAL(15,2)                            │
-│   payment_date: TIMESTAMP                                  │
-│   payment_status: VARCHAR(50)                              │
+│ emp_timesheets:                                             │
+│   timesheet_id: INTEGER (Primary Key)                      │
+│   employee_id: INTEGER (Foreign Key → emp_employees)       │
+│   hours_worked: DECIMAL(8,2)                               │
+│   date_worked: TIMESTAMP                                   │
+│   project_id: INTEGER                                      │
 │   ... (all columns with types)                             │
 │                                                             │
 │ [Repeated for all 354 tables]                              │
@@ -166,28 +166,28 @@ When you ask: `"change this to LEFT JOIN and include zero payments"`
 
 ### **What Gemini Receives for Improvements**
 
-From your logs, when you said: `"now in the above query don't include the VOID and DRAFT invoices"`
+From your logs, when you said: `"now in the above query don't include the INACTIVE and TERMINATED employees"`
 
 ```
 📨 Gemini Input Package:
 ┌─────────────────────────────────────────────────────────────┐
 │ CONVERSATION CONTEXT:                                       │
-│ • Previous query about invoice amounts                      │
+│ • Previous query about work hours                           │
 │ • AI's understanding of current SQL structure               │
-│ • User's business intent (exclude certain invoice types)   │
+│ • User's business intent (exclude certain employee types)  │
 │                                                             │
 │ CURRENT SQL STATE:                                          │
 │ • The exact SQL query currently active                      │
-│ • Tables being used (dl_invoices)                          │
+│ • Tables being used (emp_employees)                         │
 │ • Current filtering conditions                              │
 │                                                             │
 │ IMPROVEMENT REQUEST:                                        │
-│ • "don't include the VOID and DRAFT invoices"              │
+│ • "don't include the INACTIVE and TERMINATED employees"    │
 │ • Gemini understands this means adding WHERE clauses       │
-│ • Knows to filter on invoice status fields                 │
+│ • Knows to filter on employee status fields                │
 │                                                             │
 │ SCHEMA CONTEXT:                                             │
-│ • dl_invoices table structure                               │
+│ • emp_employees table structure                             │
 │ • Available status/type columns                             │
 │ • Data types and constraints                                │
 └─────────────────────────────────────────────────────────────┘
@@ -232,22 +232,22 @@ From your logs, when you said: `"now in the above query don't include the VOID a
 ### **How Context Grows Over Time**
 
 ```
-Turn 1: "get companies with payments"
+Turn 1: "get employees with work hours"
 ├─ Schema: 61,620 chars
 ├─ Context: 0 chars (new conversation)
 └─ Total: ~62,000 chars
 
-Turn 2: "change to LEFT JOIN"
+Turn 2: "change to LEFT JOIN and include employees with zero hours"
 ├─ Schema: 61,620 chars  
 ├─ Context: 1,200 chars (1 previous exchange)
 └─ Total: ~63,000 chars
 
-Turn 3: "add WHERE clause for active companies"
+Turn 3: "add WHERE clause for active employees"
 ├─ Schema: 61,620 chars
 ├─ Context: 2,400 chars (2 previous exchanges)
 └─ Total: ~64,000 chars
 
-Turn 4: "exclude VOID and DRAFT invoices"
+Turn 4: "exclude INACTIVE and TERMINATED employees"
 ├─ Schema: 61,620 chars
 ├─ Context: 3,600 chars (3 previous exchanges)
 └─ Total: ~65,000 chars
@@ -257,7 +257,7 @@ Turn 4: "exclude VOID and DRAFT invoices"
 
 ### **Actual Gemini Input Analysis**
 
-From your log: `"now in the above query don't include the VOID and DRAFT invoices"`
+From your log: `"now in the above query don't include the INACTIVE and TERMINATED employees"`
 
 ```
 📊 Log Analysis:
@@ -267,14 +267,14 @@ From your log: `"now in the above query don't include the VOID and DRAFT invoice
 │ 📋 Tables sent: 20 tables (filtered set)                   │
 │ 📝 Prompt size: 58,037 characters                          │
 │ 🤖 API call duration: 1.81s                                │
-│ 🎯 Tables selected: dl_invoices                             │
+│ 🎯 Tables selected: emp_employees                           │
 │ ✅ Confidence: High (based on context understanding)       │
 │                                                             │
 │ Context Understanding:                                      │
-│ • Gemini knew this was about previous invoice query        │
-│ • Understood need to filter invoice status                 │
-│ • Applied business logic to exclude unwanted statuses      │
-│ • Maintained existing query structure                      │
+│ • Gemini knew this was about previous employee query        │
+│ • Understood need to filter employee status                 │
+│ • Applied business logic to exclude unwanted statuses       │
+│ • Maintained existing query structure                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 

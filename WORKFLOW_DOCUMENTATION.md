@@ -40,7 +40,7 @@ The AI SQL Query Generator is an intelligent system that converts natural langua
 
 ### 1️⃣ **User Input Stage**
 ```
-User Query: "get all companies with payment amounts"
+User Query: "get all employees with their total work hours"
     ↓
 ┌─────────────────────────────────────────┐
 │ Input Validation & Processing           │
@@ -173,7 +173,7 @@ Schema Available: 354+ tables cached for performance
     ↓
 ┌─────────────────────────────────────────┐
 │ 3. User Types Query                     │
-│ "get all companies with payment amounts"│
+│ "get all employees with their work hours"│
 └─────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────┐
@@ -267,28 +267,27 @@ Total Time: ~5.8-10.6s (vs previous 5+ minutes)
 ### **Multi-Turn Conversation Example**
 ```
 Turn 1:
-User: "get all companies with payment amounts"
+User: "get all employees with their work hours"
 System: 
-├─ AI selects: dl_buyer, dl_payment_history
-├─ Generates: SELECT c.company_name, SUM(p.amount)...
-├─ Confidence: 95%
-├─ Execution: 0.8s
-└─ Results: 1,234 rows
+├─ AI analyzes intent: employee data + work tracking
+├─ AI selects: emp_employees, emp_timesheets
+├─ SQL: SELECT e.name, SUM(t.hours) FROM emp_employees e...
+└─ Result: 1,234 employees with work hours
 
 Turn 2:
 User: "change this to LEFT JOIN"
 System:
 ├─ Context: Remembers original intent
-├─ AI understands: Include all companies
+├─ AI understands: Include all employees
 ├─ Modifies: INNER → LEFT JOIN, adds COALESCE
 ├─ Confidence: 92%
 └─ Shows: Before/after comparison
 
 Turn 3:
-User: "add WHERE clause for companies after 2020"
+User: "add WHERE clause for employees after 2020"
 System:
 ├─ Context: Remembers LEFT JOIN + original intent
-├─ AI adds: WHERE c.created_date > '2020-01-01'
+├─ AI adds: WHERE e.created_date > '2020-01-01'
 ├─ Maintains: All previous improvements
 ├─ Confidence: 89%
 └─ Shows: Complete SQL evolution
@@ -314,7 +313,7 @@ streamlit run chat_app.py
 ### **2. CLI Interface**
 ```bash
 # Direct query
-python main.py "get all companies with payments"
+python main.py "get all employees with work hours"
 
 # Features Available:
 ├─ Single query processing
